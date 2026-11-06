@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recursos Institucionales · Escuela Normal Superior María Auxiliadora · Girardot</title>
+  <meta name="description" content="Consulta de recursos bibliográficos, tecnológicos y didácticos de la Escuela Normal Superior María Auxiliadora de Girardot.">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="saltar" href="#principal">Saltar al contenido</a>
+
+  <div class="franja-institucional" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+  <header class="encabezado">
+    <div class="contenedor encabezado__fila">
+      <a href="#inicio" class="marca" aria-label="Inicio">
+        <img src="assets/escudo.png" alt="Escudo Escuela Normal Superior María Auxiliadora" class="marca__escudo">
+        <span class="marca__texto">
+          <span class="marca__inst">Escuela Normal Superior<br>María Auxiliadora</span>
+          <span class="marca__sis">Recursos Institucionales · Girardot</span>
+        </span>
+      </a>
+      <div class="encabezado__acciones" id="zonaUsuario"></div>
+      <button class="btn-menu" id="btnMenu" aria-label="Abrir menú" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <nav class="navegacion" id="navegacion" aria-label="Secciones">
+      <div class="contenedor navegacion__fila">
+        <a href="#inicio" data-ruta="inicio">Inicio</a>
+        <a href="#consulta" data-ruta="consulta">Consulta de inventarios</a>
+        <a href="#biblioteca" data-ruta="biblioteca" data-protegida="1">Biblioteca</a>
+        <a href="#tecnologica" data-ruta="tecnologica" data-protegida="1">Tecnológica</a>
+        <a href="#didactica" data-ruta="didactica" data-protegida="1">Didáctica</a>
+        <a href="#dashboard" data-ruta="dashboard" data-protegida="1">Dashboard</a>
+        <a href="#usuarios" data-ruta="usuarios" data-protegida="1" data-solo-admin="1" hidden>Cuentas</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="aviso-demo" id="avisoDemo" hidden>
+    <div class="contenedor">
+      <strong>Modo demostración.</strong> Los datos se guardan solo en este navegador. Configure <code>API_URL</code> en <code>js/config.js</code> para conectar la base de datos institucional.
+      <button class="enlace" id="btnReiniciarDemo">Restablecer datos de ejemplo</button>
+    </div>
+  </div>
+
+  <main id="principal" tabindex="-1">
+    <section class="vista" id="v-inicio"></section>
+    <section class="vista" id="v-consulta" hidden></section>
+    <section class="vista" id="v-biblioteca" hidden></section>
+    <section class="vista" id="v-tecnologica" hidden></section>
+    <section class="vista" id="v-didactica" hidden></section>
+    <section class="vista" id="v-dashboard" hidden></section>
+    <section class="vista" id="v-usuarios" hidden></section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie__fila">
+      <div class="pie__marca">
+        <img src="assets/escudo.png" alt="" width="44">
+        <div>
+          <strong>Escuela Normal Superior María Auxiliadora</strong><br>
+          Girardot, Cundinamarca · Formando maestros desde la ribera del Magdalena
+        </div>
+      </div>
+      <div class="pie__der">
+        Sistema de Consulta de Recursos Institucionales<br>
+        <span id="pieAnio"></span> · Programa de Formación Complementaria (PFC)
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal-fondo" id="modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+      <div class="modal__cab">
+        <h2 id="modalTitulo"></h2>
+        <button class="modal__cerrar" id="modalCerrar" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal__cuerpo" id="modalCuerpo"></div>
+    </div>
+  </div>
+  <div class="tooltip" id="tooltip" role="status" hidden></div>
+  <div class="avisos" id="avisos" aria-live="polite"></div>
+
+  <script src="js/vendor/xlsx.full.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/esquema.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/excel.js"></script>
+  <script src="js/graficos.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
