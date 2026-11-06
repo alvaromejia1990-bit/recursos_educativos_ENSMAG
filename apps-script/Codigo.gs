@@ -26,14 +26,13 @@ const CONFIG = {
 const COLECCIONES = {
   libros: {
     hoja: 'Libros', prefijo: 'LIB', rol: 'biblioteca', baja: false,
-    campos: ['codigo', 'titulo', 'autor', 'editorial', 'anio', 'isbn', 'area', 'tipo',
-             'ejemplares', 'ubicacion', 'estado', 'observaciones'],
-    requeridos: ['titulo', 'autor', 'ejemplares']
+    campos: ['codigo', 'titulo', 'autor', 'editorial', 'anio', 'area', 'tipo',
+             'ejemplares', 'ubicacion', 'estado', 'disponibilidad', 'observaciones'],
+    requeridos: ['titulo', 'autor', 'ejemplares', 'estado']
   },
   repositorios: {
     hoja: 'Repositorios', prefijo: 'REP', rol: 'biblioteca', baja: false,
-    campos: ['codigo', 'titulo', 'autores', 'asesor', 'anio', 'cohorte', 'linea', 'modalidad',
-             'palabrasClave', 'resumen', 'enlace', 'formato', 'ubicacion'],
+    campos: ['codigo', 'titulo', 'autores', 'asesor', 'anio', 'linea', 'modalidad', 'formato'],
     requeridos: ['titulo', 'autores', 'anio']
   },
   tecnologicos: {

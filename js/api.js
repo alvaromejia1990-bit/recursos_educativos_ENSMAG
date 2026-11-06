@@ -3,7 +3,7 @@
   const CFG = window.ENSMA_CONFIG;
   const E = window.ESQUEMA;
   const DEMO = !CFG.API_URL;
-  const LS = 'ensma_demo_v1';
+  const LS = 'ensma_demo_v2';
 
   /* ------------------------------ API real ------------------------------ */
   async function llamar(accion, datos) {
@@ -215,26 +215,26 @@
       return o;
     });
     const libros = base('libros', [
-      ['Cien años de soledad', 'Gabriel García Márquez', 'Sudamericana', 1967, '', 'Lenguaje y Literatura', 'Literatura', 6, 'Estante L-1', 'Disponible'],
-      ['María', 'Jorge Isaacs', 'Panamericana', 2015, '', 'Lenguaje y Literatura', 'Literatura', 10, 'Estante L-1', 'Disponible'],
-      ['Matemáticas 9 – Los Caminos del Saber', 'Equipo editorial Santillana', 'Santillana', 2019, '', 'Matemáticas', 'Texto escolar', 25, 'Estante M-2', 'Disponible'],
-      ['Trigonometría y geometría analítica', 'Earl W. Swokowski', 'Cengage', 2011, '', 'Matemáticas', 'Libro de consulta', 4, 'Estante M-3', 'Prestado'],
-      ['Pedagogía de la autonomía', 'Paulo Freire', 'Siglo XXI', 2004, '', 'Pedagogía y Educación', 'Libro de consulta', 3, 'Estante P-1', 'Disponible'],
-      ['Didáctica magna', 'Juan Amós Comenio', 'Porrúa', 2000, '', 'Pedagogía y Educación', 'Libro de consulta', 2, 'Estante P-1', 'Disponible'],
-      ['El principito', 'Antoine de Saint-Exupéry', 'Salamandra', 2008, '', 'Literatura infantil', 'Literatura', 12, 'Estante I-1', 'Disponible'],
-      ['Ciencias Naturales 7', 'Equipo editorial Norma', 'Norma', 2018, '', 'Ciencias Naturales', 'Texto escolar', 20, 'Estante C-1', 'Disponible'],
-      ['Historia de Colombia y sus oligarquías', 'Antonio Caballero', 'Planeta', 2018, '', 'Ciencias Sociales', 'Libro de consulta', 2, 'Estante S-2', 'Disponible'],
-      ['Diccionario de la lengua española', 'Real Academia Española', 'Espasa', 2014, '', 'Referencia general', 'Enciclopedia / Diccionario', 5, 'Referencia', 'Disponible'],
-      ['English Please! 10', 'Ministerio de Educación Nacional', 'MEN', 2016, '', 'Inglés', 'Texto escolar', 30, 'Estante IN-1', 'Disponible'],
-      ['Psicología del niño', 'Jean Piaget, Bärbel Inhelder', 'Morata', 2015, '', 'Pedagogía y Educación', 'Libro de consulta', 3, 'Estante P-2', 'En reparación']
-    ], ['titulo', 'autor', 'editorial', 'anio', 'isbn', 'area', 'tipo', 'ejemplares', 'ubicacion', 'estado']);
+      ['Cien años de soledad', 'Gabriel García Márquez', 'Sudamericana', 1967, 'Óptimo', 'Lenguaje y Literatura', 'Literatura', 6, 'Estante L-1', 'Disponible'],
+      ['María', 'Jorge Isaacs', 'Panamericana', 2015, 'Regular', 'Lenguaje y Literatura', 'Literatura', 10, 'Estante L-1', 'Disponible'],
+      ['Matemáticas 9 – Los Caminos del Saber', 'Equipo editorial Santillana', 'Santillana', 2019, 'Óptimo', 'Matemáticas', 'Texto escolar', 25, 'Estante M-2', 'Disponible'],
+      ['Trigonometría y geometría analítica', 'Earl W. Swokowski', 'Cengage', 2011, 'Regular', 'Matemáticas', 'Libro de consulta', 4, 'Estante M-3', 'Prestado'],
+      ['Pedagogía de la autonomía', 'Paulo Freire', 'Siglo XXI', 2004, 'Óptimo', 'Pedagogía y Educación', 'Libro de consulta', 3, 'Estante P-1', 'Disponible'],
+      ['Didáctica magna', 'Juan Amós Comenio', 'Porrúa', 2000, 'Malo', 'Pedagogía y Educación', 'Libro de consulta', 2, 'Estante P-1', 'Disponible'],
+      ['El principito', 'Antoine de Saint-Exupéry', 'Salamandra', 2008, 'Óptimo', 'Literatura infantil', 'Literatura', 12, 'Estante I-1', 'Disponible'],
+      ['Ciencias Naturales 7', 'Equipo editorial Norma', 'Norma', 2018, 'Óptimo', 'Ciencias Naturales', 'Texto escolar', 20, 'Estante C-1', 'Disponible'],
+      ['Historia de Colombia y sus oligarquías', 'Antonio Caballero', 'Planeta', 2018, 'Regular', 'Ciencias Sociales', 'Libro de consulta', 2, 'Estante S-2', 'Disponible'],
+      ['Diccionario de la lengua española', 'Real Academia Española', 'Espasa', 2014, 'Óptimo', 'Referencia general', 'Enciclopedia / Diccionario', 5, 'Referencia', 'Disponible'],
+      ['English Please! 10', 'Ministerio de Educación Nacional', 'MEN', 2016, 'Óptimo', 'Inglés', 'Texto escolar', 30, 'Estante IN-1', 'Disponible'],
+      ['Psicología del niño', 'Jean Piaget, Bärbel Inhelder', 'Morata', 2015, 'Malo', 'Pedagogía y Educación', 'Libro de consulta', 3, 'Estante P-2', 'En reparación']
+    ], ['titulo', 'autor', 'editorial', 'anio', 'estado', 'area', 'tipo', 'ejemplares', 'ubicacion', 'disponibilidad']);
     const repositorios = base('repositorios', [
-      ['El juego como estrategia para el desarrollo del pensamiento numérico en transición', 'Estudiantes PFC (ejemplo)', 'Docente asesor(a)', 2024, '2024-II', 'Educación matemática', 'Trabajo de grado', 'juego, pensamiento numérico, preescolar', 'Digital'],
-      ['El río Magdalena como escenario pedagógico para la educación ambiental', 'Estudiantes PFC (ejemplo)', 'Docente asesor(a)', 2024, '2024-I', 'Educación ambiental y territorio', 'Proyecto de investigación', 'territorio, río Magdalena, ambiente', 'Digital y físico'],
-      ['Uso de recursos digitales para la comprensión lectora en grado tercero', 'Estudiantes PFC (ejemplo)', 'Docente asesor(a)', 2025, '2025-I', 'TIC y educación', 'Trabajo de grado', 'TIC, lectura, primaria', 'Digital'],
-      ['Sistematización de la práctica pedagógica en aulas multigrado rurales', 'Estudiantes PFC (ejemplo)', 'Docente asesor(a)', 2023, '2023-II', 'Pedagogía y didáctica', 'Sistematización de práctica', 'práctica pedagógica, ruralidad', 'Físico'],
-      ['Estrategias de inclusión para estudiantes con barreras de aprendizaje', 'Estudiantes PFC (ejemplo)', 'Docente asesor(a)', 2025, '2025-II', 'Educación inclusiva', 'Trabajo de grado', 'inclusión, DUA', 'Digital']
-    ], ['titulo', 'autores', 'asesor', 'anio', 'cohorte', 'linea', 'modalidad', 'palabrasClave', 'formato']);
+      ['El juego como estrategia para el desarrollo del pensamiento numérico en transición', 'Estudiantes PFC (ejemplo)', 'Docente asesor(a)', 2024, 'Educación matemática', 'Trabajo de grado', 'Digital'],
+      ['El río Magdalena como escenario pedagógico para la educación ambiental', 'Estudiantes PFC (ejemplo)', 'Docente asesor(a)', 2024, 'Educación ambiental y territorio', 'Proyecto de investigación', 'Digital y físico'],
+      ['Uso de recursos digitales para la comprensión lectora en grado tercero', 'Estudiantes PFC (ejemplo)', 'Docente asesor(a)', 2025, 'TIC y educación', 'Trabajo de grado', 'Digital'],
+      ['Sistematización de la práctica pedagógica en aulas multigrado rurales', 'Estudiantes PFC (ejemplo)', 'Docente asesor(a)', 2023, 'Pedagogía y didáctica', 'Sistematización de práctica', 'Físico'],
+      ['Estrategias de inclusión para estudiantes con barreras de aprendizaje', 'Estudiantes PFC (ejemplo)', 'Docente asesor(a)', 2025, 'Educación inclusiva', 'Trabajo de grado', 'Digital']
+    ], ['titulo', 'autores', 'asesor', 'anio', 'linea', 'modalidad', 'formato']);
     const tecnologicos = base('tecnologicos', [
       ['Computador portátil estudiantil', 'Computador portátil', 'Lenovo', 'ThinkPad', '', 30, 'Sala de informática 1', 'Coordinación', 'MEN', 'Bueno'],
       ['Computador de escritorio', 'Computador de escritorio', 'HP', 'ProDesk 400', '', 20, 'Sala de informática 2', 'Coordinación', 'Recursos propios', 'Regular'],

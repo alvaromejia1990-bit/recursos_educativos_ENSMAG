@@ -60,9 +60,11 @@
     $('#avisos').appendChild(d);
     setTimeout(() => d.remove(), tipo === 'error' ? 6500 : 3800);
   }
-  let alCerrarModal = null;
+  let alCerrarModal = null, modalBloqueante = false;
   function abrirModal(titulo, html, opts) {
     opts = opts || {};
+    modalBloqueante = !!opts.bloqueante;
+    $('#modalCerrar').hidden = modalBloqueante;
     $('#modalTitulo').textContent = titulo;
     $('#modalCuerpo').innerHTML = html;
     $('.modal').classList.toggle('ancho', !!opts.ancho);
@@ -73,12 +75,12 @@
     return $('#modalCuerpo');
   }
   function cerrarModal() {
-    $('#modal').hidden = true; $('#modalCuerpo').innerHTML = '';
+    $('#modal').hidden = true; $('#modalCuerpo').innerHTML = ''; modalBloqueante = false; $('#modalCerrar').hidden = false;
     if (alCerrarModal) { const f = alCerrarModal; alCerrarModal = null; f(); }
   }
-  $('#modalCerrar').addEventListener('click', cerrarModal);
-  $('#modal').addEventListener('mousedown', e => { if (e.target.id === 'modal') cerrarModal(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').hidden) cerrarModal(); });
+  $('#modalCerrar').addEventListener('click', () => { if (!modalBloqueante) cerrarModal(); });
+  $('#modal').addEventListener('mousedown', e => { if (e.target.id === 'modal' && !modalBloqueante) cerrarModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').hidden && !modalBloqueante) cerrarModal(); });
 
   function confirmar(titulo, mensaje, textoBtn, clase) {
     return new Promise(res => {
@@ -211,6 +213,7 @@
     $$('.navegacion a').forEach(a => a.classList.toggle('activo', a.dataset.ruta === r));
     $('#navegacion').classList.remove('abierta');
     Graficos.ocultarTooltip();
+    if (modalBloqueante && r !== 'consulta') { alCerrarModal = null; cerrarModal(); }
     const vista = $('#v-' + r);
     ({
       inicio: vInicio, consulta: () => vConsulta(param), biblioteca: () => vGestionBiblioteca(),
@@ -301,32 +304,36 @@
   }
 
   /* ============================== CONSULTA ============================== */
-  function consultante() { try { return JSON.parse(sessionStorage.getItem('ensma_consultante') || 'null'); } catch (e) { return null; } }
+  /* El registro del consultante vive solo en memoria: se solicita cada vez que se ingresa (o recarga) el sitio. */
+  let registroConsultante = null;
+  function consultante() { return registroConsultante; }
 
   function pedirIdentificacion(alListo) {
     const actual = consultante() || {};
-    const m = abrirModal('¿Quién realiza la consulta?', `
-      <p style="color:var(--tinta-2)">La consulta es libre. Estos datos se usan únicamente para las estadísticas de uso de los recursos institucionales.</p>
+    const m = abrirModal('Registro para la consulta', `
+      <p style="color:var(--tinta-2)">Para acceder a la consulta de inventarios diligencie este registro. Es obligatorio y se solicita cada vez que ingresa al sitio. Los datos se usan únicamente para las estadísticas de uso de los recursos institucionales.</p>
       <form id="fIdent">
         <div class="campo"><label>Tipo de usuario <span class="req">*</span></label>
           <select name="tipo" id="iTipo" required>${E.TIPOS_CONSULTANTE.map(t => `<option ${t === actual.tipo ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
-        <div class="campo" style="margin-top:12px"><label>Nombre <span class="req" id="iNomReq">*</span></label><input name="nombre" id="iNombre" value="${esc(actual.nombre || '')}" maxlength="120"></div>
+        <div class="campo" style="margin-top:12px"><label>Nombre completo <span class="req">*</span></label><input name="nombre" id="iNombre" value="${esc(actual.nombre || '')}" maxlength="120" required></div>
         <div class="campo" style="margin-top:12px" id="iGradoC"><label>Grado / semestre <span class="req">*</span></label>
           <select name="grado" id="iGrado"><option value="">Seleccione…</option>${E.GRADOS.map(g => `<option ${g === actual.grado ? 'selected' : ''}>${g}</option>`).join('')}</select></div>
         <div class="campo" style="margin-top:12px" id="iAreaC"><label>Área que orienta <span class="req">*</span></label>
           <select name="area" id="iArea"><option value="">Seleccione…</option>${E.AREAS.map(g => `<option ${g === actual.area ? 'selected' : ''}>${g}</option>`).join('')}</select></div>
-        <div class="acciones-form"><button class="btn btn-primario">Continuar a la consulta</button></div>
-      </form>`, { alCerrar: () => { if (!consultante()) guardarConsultante({ tipo: 'Visitante', nombre: '' }); alListo && alListo(); } });
+        <div class="acciones-form">${consultante() ? '<button type="button" class="btn btn-borde" id="iCancelar">Cancelar</button>' : '<a class="btn btn-borde" href="#inicio" id="iVolver">Volver al inicio</a>'}<button class="btn btn-primario">Continuar a la consulta</button></div>
+      </form>`, { bloqueante: !consultante(), alCerrar: () => { alListo && alListo(); } });
+    const volver = $('#iVolver', m); if (volver) volver.onclick = ev => { ev.preventDefault(); alCerrarModal = null; cerrarModal(); location.hash = '#inicio'; };
+    const cancelar = $('#iCancelar', m); if (cancelar) cancelar.onclick = () => cerrarModal();
     const ajustar = () => {
       const t = $('#iTipo').value;
       $('#iGradoC').hidden = t !== 'Estudiante'; $('#iAreaC').hidden = t !== 'Docente';
-      $('#iNomReq').hidden = !(t === 'Estudiante' || t === 'Docente');
     };
     $('#iTipo', m).onchange = ajustar; ajustar();
     $('#fIdent', m).onsubmit = ev => {
       ev.preventDefault();
       const d = Object.fromEntries(new FormData(ev.target));
-      if ((d.tipo === 'Estudiante' || d.tipo === 'Docente') && !d.nombre.trim()) return aviso('Escriba su nombre.', 'error');
+      d.nombre = d.nombre.trim();
+      if (d.nombre.length < 3) return aviso('Escriba su nombre completo.', 'error');
       if (d.tipo === 'Estudiante' && !d.grado) return aviso('Seleccione su grado o semestre.', 'error');
       if (d.tipo === 'Docente' && !d.area) return aviso('Seleccione el área.', 'error');
       if (d.tipo !== 'Estudiante') d.grado = '';
@@ -334,7 +341,7 @@
       guardarConsultante(d); cerrarModal();
     };
   }
-  function guardarConsultante(d) { try { sessionStorage.setItem('ensma_consultante', JSON.stringify(d)); } catch (e) {} }
+  function guardarConsultante(d) { registroConsultante = d; }
 
   async function obtenerPublico(col, forzar) {
     if (!estado.publico[col] || forzar) estado.publico[col] = (await llamar('listar', { coleccion: col })).registros;
@@ -346,6 +353,17 @@
     const st = estado.consulta;
     if (param && COLORES[param]) {
       if (st.servicio !== param) { st.servicio = param; st.col = param === 'bibliograficos' ? 'libros' : param; st.filtros = {}; st.q = ''; }
+    }
+    if (!consultante()) {
+      v.innerHTML = `<div class="contenedor"><div class="tarjeta panel-bloqueado">
+        <div class="icono-grande">${I.usuario}</div>
+        <h2>Registro obligatorio para consultar</h2>
+        <p>Antes de acceder a la consulta de inventarios diligencie el registro del consultante (tipo de usuario, nombre y grado o área).</p>
+        <button class="btn btn-primario" id="btnRegistro">Diligenciar registro</button></div></div>`;
+      const abrir = () => pedirIdentificacion(() => { if (consultante() && location.hash.startsWith('#consulta')) vConsulta(); });
+      $('#btnRegistro', v).onclick = abrir;
+      abrir();
+      return;
     }
     v.innerHTML = `<div class="contenedor">
       <div class="cabecera-vista">
@@ -370,7 +388,6 @@
       <div id="resultados"><div class="cargando-bloque"><span class="cargando"></span></div></div>
     </div>`;
     pintarIdentidad();
-    if (!consultante()) pedirIdentificacion(pintarIdentidad);
     cargarResumen().then(r => {
       const n = { bibliograficos: fmt(r.librosTitulos + r.repositorios) + ' registros', tecnologicos: fmt(r.tecnologicos) + ' equipos', didacticos: fmt(r.didacticos) + ' elementos' };
       $$('.opcion-servicio', v).forEach(b => { const s = b.querySelector('.n'); if (s) s.textContent = n[b.dataset.serv]; });
@@ -399,7 +416,7 @@
       <button role="tab" data-col="libros" aria-selected="${st.col === 'libros'}">${'Libros'}</button>
       <button role="tab" data-col="repositorios" aria-selected="${st.col === 'repositorios'}">Repositorios de trabajos de grado (PFC)</button></div>` : '';
     $$('[data-col]', sp).forEach(b => b.onclick = () => { st.col = b.dataset.col; st.filtros = {}; st.q = ''; $('#q').value = ''; st.limite = 24; prepararColeccion(); });
-    $('#q').placeholder = { libros: 'Título, autor, editorial, ISBN…', repositorios: 'Título, autores, asesor, palabras clave…', tecnologicos: 'Nombre del equipo, marca, modelo, ubicación…', didacticos: 'Nombre del material, categoría, área…' }[st.col];
+    $('#q').placeholder = { libros: 'Título, autor, editorial, ISBN…', repositorios: 'Título del trabajo, autores, asesor, línea…', tecnologicos: 'Nombre del equipo, marca, modelo, ubicación…', didacticos: 'Nombre del material, categoría, área…' }[st.col];
     $('#resultados').innerHTML = '<div class="cargando-bloque"><span class="cargando"></span> Cargando inventario…</div>';
     try { await obtenerPublico(st.col); }
     catch (e) { $('#resultados').innerHTML = `<div class="alerta error">${esc(e.message)}</div>`; return; }
@@ -467,7 +484,7 @@
 
   function etiquetaEstado(v) {
     if (!v) return '';
-    const cls = /^(Disponible|Bueno|Activo)$/.test(v) ? 'ok' : /^(Regular|Prestado|En mantenimiento|En reparación)$/.test(v) ? 'warn' : /^(Malo|Extraviado|De baja)$/.test(v) ? 'mal' : '';
+    const cls = /^(Disponible|Bueno|Óptimo|Activo)$/.test(v) ? 'ok' : /^(Regular|Prestado|En mantenimiento|En reparación)$/.test(v) ? 'warn' : /^(Malo|Extraviado|De baja)$/.test(v) ? 'mal' : '';
     return `<span class="etiqueta ${cls}">${esc(v)}</span>`;
   }
   function ficha(col, r, i, serv) {
@@ -477,7 +494,7 @@
       <span class="ficha__cod">${esc(r.codigo)}</span>
       <span class="ficha__tit">${esc(r[c.titulo])}</span>
       <span class="ficha__sub">${esc(r[c.subtitulo])}</span>
-      <span class="ficha__pie">${extra.filter(x => x && !/^undefined/.test(x)).map(x => `<span class="etiqueta">${esc(x)}</span>`).join('')}${etiquetaEstado(r.estado)}</span>
+      <span class="ficha__pie">${extra.filter(x => x && !/^undefined/.test(x)).map(x => `<span class="etiqueta">${esc(x)}</span>`).join('')}${etiquetaEstado(r.estado)}${col === 'libros' ? etiquetaEstado(r.disponibilidad) : ''}</span>
     </button>`;
   }
 
@@ -486,7 +503,7 @@
     const filas = c.campos.filter(f => r[f.k] !== undefined && r[f.k] !== '').map(f => {
       let val = esc(r[f.k]);
       if (f.t === 'url' && /^https?:\/\//i.test(r[f.k])) val = `<a href="${esc(r[f.k])}" target="_blank" rel="noopener">Abrir documento ${I.enlace.replace('<svg', '<svg width="14" height="14"')}</a>`;
-      if (f.k === 'estado') val = etiquetaEstado(r[f.k]);
+      if (f.k === 'estado' || f.k === 'disponibilidad') val = etiquetaEstado(r[f.k]);
       if (f.t === 'date') val = esc(fechaBonita(r[f.k]));
       return `<dt>${esc(f.l)}</dt><dd>${val}</dd>`;
     });
@@ -663,7 +680,7 @@
     if (c.cantidad) mini.push([fmt(act.reduce((s, r) => s + (+r[c.cantidad] || 0), 0)), col === 'libros' ? 'Ejemplares' : 'Unidades activas']);
     if (c.baja) mini.push([fmt(todos.length - act.length), 'Dados de baja']);
     if (col === 'repositorios') mini.push([fmt(new Set(todos.map(r => r.anio)).size), 'Años con trabajos']);
-    if (col === 'libros') mini.push([fmt(todos.filter(r => r.estado === 'Prestado').length), 'Títulos prestados']);
+    if (col === 'libros') mini.push([fmt(todos.filter(r => r.disponibilidad === 'Prestado').length), 'Títulos prestados']);
     $('#rg_' + col).innerHTML = mini.map(m => `<div class="mini-cifra"><b>${m[0]}</b><span>${m[1]}</span></div>`).join('');
     // datalists
     c.campos.filter(x => x.lista).forEach(x => { const dl = $('#dl_' + x.k); if (dl) dl.innerHTML = [...new Set(todos.map(r => r[x.k]).filter(Boolean))].sort().map(o => `<option value="${esc(o)}">`).join(''); });
@@ -678,7 +695,7 @@
     const cols = c.tabla.map(k => c.campos.find(f => f.k === k));
     cont.innerHTML = `<div class="tabla-envoltura"><table class="tabla"><thead><tr>${cols.map(f => `<th>${esc(f.l)}</th>`).join('')}${c.baja ? '<th>Situación</th>' : ''}<th class="acc">Acciones</th></tr></thead>
       <tbody>${vista.map(r => `<tr class="${r.situacion === 'De baja' ? 'de-baja' : ''}">${cols.map(f => {
-        if (f.k === 'estado') return `<td>${etiquetaEstado(r[f.k])}</td>`;
+        if (f.k === 'estado' || f.k === 'disponibilidad') return `<td>${etiquetaEstado(r[f.k])}</td>`;
         if (f.t === 'number') return `<td class="num">${esc(r[f.k])}</td>`;
         return `<td class="${f.k === c.titulo ? 'titulo-celda' : ''}">${esc(r[f.k])}</td>`;
       }).join('')}${c.baja ? `<td>${etiquetaEstado(r.situacion || 'Activo')}${r.fechaBaja ? `<br><small>${esc(fechaBonita(r.fechaBaja))}</small>` : ''}</td>` : ''}

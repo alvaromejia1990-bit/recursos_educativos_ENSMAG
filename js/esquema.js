@@ -16,15 +16,15 @@
         { k: 'autor', l: 'Autor(es)', t: 'text', req: true },
         { k: 'editorial', l: 'Editorial', t: 'text' },
         { k: 'anio', l: 'Año de publicación', t: 'number', min: 1500, max: 2100 },
-        { k: 'isbn', l: 'ISBN', t: 'text' },
         { k: 'area', l: 'Área', t: 'select', op: AREAS, filtro: true },
         { k: 'tipo', l: 'Tipo de material', t: 'select', op: ['Texto escolar', 'Libro de consulta', 'Literatura', 'Enciclopedia / Diccionario', 'Revista', 'Guía docente', 'Otro'], filtro: true },
         { k: 'ejemplares', l: 'N.º de ejemplares', t: 'number', req: true, min: 0, def: 1 },
         { k: 'ubicacion', l: 'Ubicación (estante)', t: 'text', ph: 'Ej. Estante A-3' },
-        { k: 'estado', l: 'Disponibilidad', t: 'select', op: ['Disponible', 'Prestado', 'En reparación', 'Extraviado'], def: 'Disponible', filtro: true },
+        { k: 'estado', l: 'Estado', t: 'select', op: ['Óptimo', 'Regular', 'Malo'], req: true, def: 'Óptimo', filtro: true },
+        { k: 'disponibilidad', l: 'Disponibilidad', t: 'select', op: ['Disponible', 'Prestado', 'En reparación', 'Extraviado'], def: 'Disponible', filtro: true },
         { k: 'observaciones', l: 'Observaciones', t: 'textarea', ancho: 2 }
       ],
-      tabla: ['codigo', 'titulo', 'autor', 'area', 'ejemplares', 'estado']
+      tabla: ['codigo', 'titulo', 'autor', 'area', 'ejemplares', 'estado', 'disponibilidad']
     },
     repositorios: {
       nombre: 'Repositorios PFC', singular: 'trabajo de grado', servicio: 'Bibliográficos', prefijo: 'REP', rol: 'biblioteca', baja: false,
@@ -34,15 +34,10 @@
         { k: 'titulo', l: 'Título del trabajo de grado', t: 'text', req: true, ancho: 2 },
         { k: 'autores', l: 'Autor(es) – estudiantes PFC', t: 'text', req: true },
         { k: 'asesor', l: 'Asesor(a) / director(a)', t: 'text' },
-        { k: 'anio', l: 'Año de sustentación', t: 'number', req: true, min: 1990, max: 2100, filtro: true },
-        { k: 'cohorte', l: 'Cohorte / semestre', t: 'text', ph: 'Ej. 2025-II' },
+        { k: 'anio', l: 'Año', t: 'number', req: true, min: 1990, max: 2100, ph: 'Ej. 2025', filtro: true },
         { k: 'linea', l: 'Línea de investigación', t: 'select', op: ['Pedagogía y didáctica', 'Infancia y educación inicial', 'Educación inclusiva', 'TIC y educación', 'Educación matemática', 'Lenguaje y literatura', 'Educación ambiental y territorio', 'Otra'], filtro: true },
         { k: 'modalidad', l: 'Modalidad', t: 'select', op: ['Trabajo de grado', 'Proyecto de investigación', 'Sistematización de práctica', 'Monografía', 'Otra'], filtro: true },
-        { k: 'palabrasClave', l: 'Palabras clave', t: 'text', ph: 'Separadas por comas', ancho: 2 },
-        { k: 'resumen', l: 'Resumen', t: 'textarea', ancho: 2 },
-        { k: 'enlace', l: 'Enlace al documento', t: 'url', ph: 'https://drive.google.com/...' },
-        { k: 'formato', l: 'Formato', t: 'select', op: ['Digital', 'Físico', 'Digital y físico'], def: 'Digital', filtro: true },
-        { k: 'ubicacion', l: 'Ubicación física', t: 'text' }
+        { k: 'formato', l: 'Formato', t: 'select', op: ['Digital', 'Físico', 'Digital y físico'], def: 'Digital', filtro: true }
       ],
       tabla: ['codigo', 'titulo', 'autores', 'anio', 'linea', 'formato']
     },

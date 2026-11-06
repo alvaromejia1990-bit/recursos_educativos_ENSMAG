@@ -13,7 +13,7 @@ Sitio web de la **Escuela Normal Superior María Auxiliadora de Girardot** para 
 | Sección | Acceso | Qué permite |
 |---|---|---|
 | **Inicio** | Público | Cifras actualizadas: libros (ejemplares y títulos), repositorios PFC, equipos tecnológicos y didácticos. |
-| **Consulta de inventarios** | Público | Elegir servicio (Bibliográficos → Libros / Repositorios PFC, Tecnológicos, Didácticos), buscar por texto, filtrar (área, tipo, estado, categoría, ubicación, línea, año…), ver detalle. Cada consulta queda registrada con el tipo de usuario (estudiante, docente, etc.). |
+| **Consulta de inventarios** | Público (con registro obligatorio) | Antes de consultar, cada persona diligencia un registro obligatorio (tipo de usuario, nombre completo y grado o área), que se solicita de nuevo cada vez que ingresa al sitio. Elegir servicio (Bibliográficos → Libros / Repositorios PFC, Tecnológicos, Didácticos), buscar por texto, filtrar (área, tipo, estado, categoría, ubicación, línea, año…), ver detalle. Cada consulta queda registrada con el tipo de usuario (estudiante, docente, etc.). |
 | **Biblioteca** | Rol *biblioteca* o *admin* | Dos espacios independientes: **Libros** y **Repositorios de trabajos de grado (PFC)**. Formulario para agregar/editar, quitar registros con justificación, plantilla Excel, carga masiva y reporte Excel. |
 | **Tecnológica** | Rol *tecnologia* o *admin* | Formulario de registro, edición, **dar de baja** (fecha, causa y descripción), reactivar, eliminar definitivamente con justificación, plantilla, carga masiva y reporte Excel (incluye hoja de bajas). |
 | **Didáctica** | Rol *didactica* o *admin* | Igual que la sección tecnológica, para material didáctico. |
