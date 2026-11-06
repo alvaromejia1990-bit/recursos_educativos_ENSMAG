@@ -3,7 +3,7 @@
   const CFG = window.ENSMA_CONFIG;
   const E = window.ESQUEMA;
   const DEMO = !CFG.API_URL;
-  const LS = 'ensma_demo_v2';
+  const LS = 'ensma_demo_v3';
 
   /* ------------------------------ API real ------------------------------ */
   async function llamar(accion, datos) {
@@ -196,7 +196,7 @@
     const act = a => a.filter(x => x.situacion !== 'De baja');
     const suma = (a, k) => a.reduce((s, x) => s + (Number(x[k]) || 0), 0);
     return {
-      librosTitulos: db.libros.length, librosEjemplares: suma(db.libros, 'ejemplares'), repositorios: db.repositorios.length,
+      librosTitulos: db.libros.length, librosEjemplares: suma(db.libros, 'ejemplares'), librosPFCTitulos: db.librosPFC.length, librosPFCEjemplares: suma(db.librosPFC, 'ejemplares'), repositorios: db.repositorios.length,
       tecnologicos: suma(act(db.tecnologicos), 'cantidad'), tecnologicosRegistros: act(db.tecnologicos).length, tecnologicosBaja: db.tecnologicos.length - act(db.tecnologicos).length,
       didacticos: suma(act(db.didacticos), 'cantidad'), didacticosRegistros: act(db.didacticos).length, didacticosBaja: db.didacticos.length - act(db.didacticos).length,
       actualizado: fechaLocal(new Date())
@@ -227,6 +227,13 @@
       ['Diccionario de la lengua española', 'Real Academia Española', 'Espasa', 2014, 'Óptimo', 'Referencia general', 'Enciclopedia / Diccionario', 5, 'Referencia', 'Disponible'],
       ['English Please! 10', 'Ministerio de Educación Nacional', 'MEN', 2016, 'Óptimo', 'Inglés', 'Texto escolar', 30, 'Estante IN-1', 'Disponible'],
       ['Psicología del niño', 'Jean Piaget, Bärbel Inhelder', 'Morata', 2015, 'Malo', 'Pedagogía y Educación', 'Libro de consulta', 3, 'Estante P-2', 'En reparación']
+    ], ['titulo', 'autor', 'editorial', 'anio', 'estado', 'area', 'tipo', 'ejemplares', 'ubicacion', 'disponibilidad']);
+    const librosPFC = base('librosPFC', [
+      ['Pedagogía del oprimido', 'Paulo Freire', 'Siglo XXI', 2005, 'Óptimo', 'Pedagogía y Educación', 'Libro de consulta', 4, 'Estante PFC-1', 'Disponible'],
+      ['La práctica pedagógica como escenario de formación', 'Varios autores (ejemplo)', 'Magisterio', 2016, 'Óptimo', 'Pedagogía y Educación', 'Libro de consulta', 2, 'Estante PFC-1', 'Disponible'],
+      ['Didáctica de la matemática en la educación infantil', 'María Antonia Canals', 'Graó', 2010, 'Regular', 'Matemáticas', 'Libro de consulta', 3, 'Estante PFC-2', 'Prestado'],
+      ['Investigación cualitativa en educación', 'Varios autores (ejemplo)', 'Morata', 2012, 'Óptimo', 'Pedagogía y Educación', 'Libro de consulta', 2, 'Estante PFC-2', 'Disponible'],
+      ['Literatura infantil y formación de lectores', 'Varios autores (ejemplo)', 'Fondo de Cultura Económica', 2014, 'Óptimo', 'Literatura infantil', 'Libro de consulta', 5, 'Estante PFC-3', 'Disponible']
     ], ['titulo', 'autor', 'editorial', 'anio', 'estado', 'area', 'tipo', 'ejemplares', 'ubicacion', 'disponibilidad']);
     const repositorios = base('repositorios', [
       ['El juego como estrategia para el desarrollo del pensamiento numérico en transición', 'Estudiantes PFC (ejemplo)', 'Docente asesor(a)', 2024, 'Educación matemática', 'Trabajo de grado', 'Digital'],
@@ -260,7 +267,7 @@
 
     // Consultas de ejemplo (últimos 45 días)
     const consultas = [];
-    const terminos = { 'Bibliográficos': ['matemáticas', 'García Márquez', 'pedagogía', 'trabajo de grado', 'inclusión', 'principito', 'trigonometría', 'diccionario'], 'Tecnológicos': ['portátil', 'video beam', 'tableta', 'robótica', 'televisor'], 'Didácticos': ['regletas', 'geoplano', 'microscopio', 'títeres', 'balones', 'ábaco'] };
+    const terminos = { 'Bibliográficos PFC': ['pedagogía', 'Freire', 'didáctica', 'investigación', 'lectores'], 'Bibliográficos': ['matemáticas', 'García Márquez', 'pedagogía', 'trabajo de grado', 'inclusión', 'principito', 'trigonometría', 'diccionario'], 'Tecnológicos': ['portátil', 'video beam', 'tableta', 'robótica', 'televisor'], 'Didácticos': ['regletas', 'geoplano', 'microscopio', 'títeres', 'balones', 'ábaco'] };
     const nombresE = ['Valentina R.', 'Santiago M.', 'Mariana G.', 'Juan José P.', 'Sara L.', 'Samuel C.', 'Isabella T.', 'Daniel A.'];
     const nombresD = ['Docente de Matemáticas', 'Docente de Lenguaje', 'Docente de Ciencias', 'Docente de Preescolar', 'Docente PFC'];
     let semillaN = 7;
@@ -269,14 +276,15 @@
     for (let i = 0; i < 160; i++) {
       const p = rnd();
       const tipo = p < 0.58 ? 'Estudiante' : p < 0.88 ? 'Docente' : pick(['Directivo / Administrativo', 'Padre de familia', 'Visitante']);
-      const servicio = pick(['Bibliográficos', 'Bibliográficos', 'Tecnológicos', 'Didácticos']);
+      const servicio = pick(['Bibliográficos', 'Bibliográficos', 'Bibliográficos PFC', 'Tecnológicos', 'Didácticos']);
+      const filtrosC = servicio === 'Bibliográficos' ? (rnd() < 0.35 ? 'Colección: Repositorios PFC' : 'Colección: Libros') : servicio === 'Bibliográficos PFC' ? 'Colección: Libros PFC' : '';
       const d = new Date(hoy.getTime() - Math.floor(rnd() * 45) * 864e5); d.setHours(7 + Math.floor(rnd() * 10), Math.floor(rnd() * 60));
-      consultas.push({ fecha: fechaLocal(d), tipo, nombre: tipo === 'Estudiante' ? pick(nombresE) : tipo === 'Docente' ? pick(nombresD) : '', grado: tipo === 'Estudiante' ? pick(E.GRADOS) : '', area: tipo === 'Docente' ? pick(['Matemáticas', 'Lenguaje y Literatura', 'Ciencias Naturales', 'Preescolar', 'Pedagogía y Educación']) : '', servicio, termino: pick(terminos[servicio]), filtros: '', resultados: String(1 + Math.floor(rnd() * 8)) });
+      consultas.push({ fecha: fechaLocal(d), tipo, nombre: tipo === 'Estudiante' ? pick(nombresE) : tipo === 'Docente' ? pick(nombresD) : '', grado: tipo === 'Estudiante' ? pick(E.GRADOS) : '', area: tipo === 'Docente' ? pick(['Matemáticas', 'Lenguaje y Literatura', 'Ciencias Naturales', 'Preescolar', 'Pedagogía y Educación']) : '', servicio, termino: pick(terminos[servicio]), filtros: filtrosC, resultados: String(1 + Math.floor(rnd() * 8)) });
     }
     consultas.sort((a, b) => a.fecha.localeCompare(b.fecha));
 
     return {
-      libros, repositorios, tecnologicos, didacticos, consultas,
+      libros, librosPFC, repositorios, tecnologicos, didacticos, consultas,
       historial: [{ fecha: f(5), usuario: 'admin', accion: 'Dar de baja', coleccion: 'didacticos', codigo: 'DID-0010', descripcion: 'Piezas deterioradas por humedad; no son recuperables.', detalle: '' }],
       usuarios: [
         { usuario: 'admin', nombre: 'Administrador (demo)', correo: '', rol: 'admin', clave: 'admin2026', activo: 'SI', fechaCreacion: f(90), ultimoIngreso: '' },

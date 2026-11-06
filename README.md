@@ -12,12 +12,12 @@ Sitio web de la **Escuela Normal Superior María Auxiliadora de Girardot** para 
 
 | Sección | Acceso | Qué permite |
 |---|---|---|
-| **Inicio** | Público | Cifras actualizadas: libros (ejemplares y títulos), repositorios PFC, equipos tecnológicos y didácticos. |
-| **Consulta de inventarios** | Público (con registro obligatorio) | Antes de consultar, cada persona diligencia un registro obligatorio (tipo de usuario, nombre completo y grado o área), que se solicita de nuevo cada vez que ingresa al sitio. Elegir servicio (Bibliográficos → Libros / Repositorios PFC, Tecnológicos, Didácticos), buscar por texto, filtrar (área, tipo, estado, categoría, ubicación, línea, año…), ver detalle. Cada consulta queda registrada con el tipo de usuario (estudiante, docente, etc.). |
-| **Biblioteca** | Rol *biblioteca* o *admin* | Dos espacios independientes: **Libros** y **Repositorios de trabajos de grado (PFC)**. Formulario para agregar/editar, quitar registros con justificación, plantilla Excel, carga masiva y reporte Excel. |
+| **Inicio** | Público | Cifras actualizadas: libros, libros PFC (ejemplares y títulos), repositorios PFC, equipos tecnológicos y didácticos. |
+| **Consulta de inventarios** | Público (con registro obligatorio) | Antes de consultar, cada persona diligencia un registro obligatorio (tipo de usuario, nombre completo y grado o área), que se solicita de nuevo cada vez que ingresa al sitio. Elegir servicio (Bibliográficos → Libros / Repositorios PFC, Bibliográficos PFC → Libros PFC, Tecnológicos, Didácticos), buscar por texto, filtrar (área, tipo, estado, categoría, ubicación, línea, año…), ver detalle. Cada consulta queda registrada con el tipo de usuario (estudiante, docente, etc.). |
+| **Biblioteca** | Rol *biblioteca* o *admin* | Tres espacios independientes: **Libros**, **Libros PFC** y **Repositorios de trabajos de grado (PFC)**. Formulario para agregar/editar, quitar registros con justificación, plantilla Excel, carga masiva y reporte Excel. |
 | **Tecnológica** | Rol *tecnologia* o *admin* | Formulario de registro, edición, **dar de baja** (fecha, causa y descripción), reactivar, eliminar definitivamente con justificación, plantilla, carga masiva y reporte Excel (incluye hoja de bajas). |
 | **Didáctica** | Rol *didactica* o *admin* | Igual que la sección tecnológica, para material didáctico. |
-| **Dashboard** | Cualquier usuario con cuenta | Consultas por periodo, por tipo de usuario (**estudiantes / docentes / otros**), por servicio, estudiantes por grado, docentes por área, términos más buscados y tabla de registros. Exportación a Excel. |
+| **Dashboard** | Cualquier usuario con cuenta | Consultas por periodo, por tipo de usuario (**estudiantes / docentes / otros**), por servicio, estudiantes por grado, docentes por área, consultas de recursos PFC (por recurso y por semestre), términos más buscados y tabla de registros. Exportación a Excel. |
 | **Cuentas** | Solo *admin* | Crear, editar, desactivar y eliminar cuentas; aprobar o rechazar solicitudes de cuenta. |
 
 **Roles:** `admin`, `biblioteca`, `tecnologia`, `didactica`, `directivo` (rector/coordinación: ve todo en solo lectura y descarga reportes).
@@ -73,7 +73,7 @@ Con `API_URL` vacío en `js/config.js`, el sitio funciona con datos de ejemplo g
    ADMIN_CLAVE: 'Ensma2026*',   // ← cámbiela
    ```
 5. Guarde (💾). En la lista de funciones seleccione **`instalar`** y pulse **Ejecutar**. Acepte los permisos que solicita Google (es su propia cuenta).
-   Se crean las hojas: *Libros, Repositorios, Tecnologicos, Didacticos, Usuarios, Solicitudes, Consultas, Historial*.
+   Se crean las hojas: *Libros, LibrosPFC, Repositorios, Tecnologicos, Didacticos, Usuarios, Solicitudes, Consultas, Historial*.
 
 ### Paso 2 · Publicar el servidor
 1. **Implementar → Nueva implementación → ⚙ Tipo: Aplicación web**.
@@ -103,7 +103,7 @@ API_URL: 'https://script.google.com/macros/s/XXXXXXXX/exec',
 ## 5. Carga masiva con Excel
 1. En la sección correspondiente pulse **Plantilla Excel** y diligencie la hoja *Plantilla* desde la fila 2 (la hoja *Instrucciones* indica los valores permitidos de cada lista).
 2. Pulse **Carga masiva** y seleccione el archivo. El sistema valida cada fila y muestra una vista previa con los errores antes de cargar.
-3. Si una fila trae un **código existente**, el registro se **actualiza** (las celdas vacías no borran datos); si el código está vacío, se asigna automáticamente (`LIB-0001`, `REP-0001`, `TEC-0001`, `DID-0001`).
+3. Si una fila trae un **código existente**, el registro se **actualiza** (las celdas vacías no borran datos); si el código está vacío, se asigna automáticamente (`LIB-0001`, `LPF-0001`, `REP-0001`, `TEC-0001`, `DID-0001`).
 4. **Reporte Excel** descarga el inventario actualizado con hoja de resumen (y hoja de bajas en tecnológicos/didácticos).
 
 ## 6. Personalización

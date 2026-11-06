@@ -24,6 +24,7 @@
   const I = {
     libro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M9 7h7M9 11h5"/></svg>',
     repo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/><path d="M22 10v6"/></svg>',
+    pfc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V9"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M4 19.5V7"/><path d="m16 2-6 3 6 3 6-3z"/><path d="M12 6.2v2.6c2 1.3 6 1.3 8 0V6.2"/></svg>',
     tec: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20M9 16v4M15 16v4"/></svg>',
     did: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><circle cx="17" cy="7" r="4"/><path d="M7 14l4 7H3z"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>',
     buscar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
@@ -47,10 +48,12 @@
   const COLORES = {
     bibliograficos: { c: 'var(--magenta)', cf: 'var(--magenta-claro)' },
     tecnologicos: { c: 'var(--azul)', cf: 'var(--azul-claro)' },
-    didacticos: { c: 'var(--verde)', cf: 'var(--verde-claro)' }
+    didacticos: { c: 'var(--verde)', cf: 'var(--verde-claro)' },
+    pfc: { c: 'var(--oro)', cf: 'var(--oro-claro)' }
   };
+  const esLibro = col => col === 'libros' || col === 'librosPFC';
   const estiloServ = s => `--c:${COLORES[s].c};--cf:${COLORES[s].cf}`;
-  const servDeCol = col => (col === 'libros' || col === 'repositorios') ? 'bibliograficos' : col;
+  const servDeCol = col => col === 'librosPFC' ? 'pfc' : (col === 'libros' || col === 'repositorios') ? 'bibliograficos' : col;
 
   /* ------------------------------ Avisos y modal ------------------------------ */
   function aviso(msg, tipo) {
@@ -258,12 +261,13 @@
         </div>
         <img class="hero__escudo" src="assets/escudo.png" alt="">
       </div>
-      <div class="cifras" id="cifras">${[0, 1, 2, 3].map(() => '<div class="cifra"><div class="cargando"></div></div>').join('')}</div>
+      <div class="cifras" id="cifras">${[0, 1, 2, 3, 4].map(() => '<div class="cifra"><div class="cargando"></div></div>').join('')}</div>
       <div class="bloque">
         <span class="eyebrow">Servicios de consulta</span>
         <h2>¿Qué recurso necesita?</h2>
         <div class="servicios">
           ${tarjetaServicio('bibliograficos', I.libro, 'Recursos bibliográficos', 'Libros de texto, literatura, obras de consulta y el repositorio de trabajos de grado de los estudiantes del PFC.')}
+          ${tarjetaServicio('pfc', I.pfc, 'Recursos bibliográficos PFC', 'Libros especializados del Programa de Formación Complementaria para la formación inicial de maestros.')}
           ${tarjetaServicio('tecnologicos', I.tec, 'Recursos tecnológicos', 'Computadores, tabletas, video beam, pantallas, kits de robótica y demás equipos tecnológicos institucionales.')}
           ${tarjetaServicio('didacticos', I.did, 'Recursos didácticos', 'Material manipulativo, de laboratorio, deportivo, musical y de arte para el trabajo pedagógico en el aula.')}
         </div>
@@ -273,7 +277,7 @@
         <h2>¿Cómo consultar?</h2>
         <div class="pasos">
           <div class="paso"><h3>Identifíquese</h3><p>Indique si es estudiante, docente o visitante. Solo se usa con fines estadísticos institucionales.</p></div>
-          <div class="paso"><h3>Elija el servicio</h3><p>Seleccione recursos bibliográficos, tecnológicos o didácticos.</p></div>
+          <div class="paso"><h3>Elija el servicio</h3><p>Seleccione recursos bibliográficos, bibliográficos PFC, tecnológicos o didácticos.</p></div>
           <div class="paso"><h3>Busque y filtre</h3><p>Escriba un título, autor, equipo o palabra clave y afine con los filtros por área, estado o ubicación.</p></div>
         </div>
       </div>
@@ -282,6 +286,7 @@
       const r = await cargarResumen(true);
       $('#cifras', v).innerHTML = [
         cifra('bibliograficos', I.libro, r.librosEjemplares, 'Libros (ejemplares)', fmt(r.librosTitulos) + ' títulos registrados'),
+        cifra('pfc', I.pfc, r.librosPFCEjemplares, 'Libros PFC (ejemplares)', fmt(r.librosPFCTitulos) + ' títulos registrados'),
         cifra('bibliograficos', I.repo, r.repositorios, 'Repositorios PFC', 'Trabajos de grado'),
         cifra('tecnologicos', I.tec, r.tecnologicos, 'Equipos tecnológicos', fmt(r.tecnologicosRegistros) + ' referencias activas'),
         cifra('didacticos', I.did, r.didacticos, 'Equipos didácticos', fmt(r.didacticosRegistros) + ' referencias activas')
@@ -289,6 +294,7 @@
       $$('[data-n-serv]', v).forEach(n => {
         const s = n.dataset.nServ;
         n.textContent = s === 'bibliograficos' ? fmt(r.librosTitulos) + ' títulos · ' + fmt(r.repositorios) + ' trabajos de grado'
+          : s === 'pfc' ? fmt(r.librosPFCTitulos) + ' títulos · ' + fmt(r.librosPFCEjemplares) + ' ejemplares'
           : s === 'tecnologicos' ? fmt(r.tecnologicos) + ' equipos disponibles' : fmt(r.didacticos) + ' elementos disponibles';
       });
     } catch (e) { $('#cifras', v).innerHTML = `<div class="alerta error" style="grid-column:1/-1">${esc(e.message)}</div>`; }
@@ -352,7 +358,7 @@
     const v = $('#v-consulta');
     const st = estado.consulta;
     if (param && COLORES[param]) {
-      if (st.servicio !== param) { st.servicio = param; st.col = param === 'bibliograficos' ? 'libros' : param; st.filtros = {}; st.q = ''; }
+      if (st.servicio !== param) { st.servicio = param; st.col = param === 'bibliograficos' ? 'libros' : param === 'pfc' ? 'librosPFC' : param; st.filtros = {}; st.q = ''; }
     }
     if (!consultante()) {
       v.innerHTML = `<div class="contenedor"><div class="tarjeta panel-bloqueado">
@@ -373,6 +379,7 @@
       </div>
       <div class="selector-servicio">
         ${botonServicio('bibliograficos', I.libro, 'Bibliográficos', 'Libros y repositorios PFC')}
+        ${botonServicio('pfc', I.pfc, 'Bibliográficos PFC', 'Libros del PFC')}
         ${botonServicio('tecnologicos', I.tec, 'Tecnológicos', 'Equipos y dispositivos')}
         ${botonServicio('didacticos', I.did, 'Didácticos', 'Material pedagógico')}
       </div>
@@ -389,7 +396,7 @@
     </div>`;
     pintarIdentidad();
     cargarResumen().then(r => {
-      const n = { bibliograficos: fmt(r.librosTitulos + r.repositorios) + ' registros', tecnologicos: fmt(r.tecnologicos) + ' equipos', didacticos: fmt(r.didacticos) + ' elementos' };
+      const n = { bibliograficos: fmt(r.librosTitulos + r.repositorios) + ' registros', pfc: fmt(r.librosPFCTitulos) + ' títulos', tecnologicos: fmt(r.tecnologicos) + ' equipos', didacticos: fmt(r.didacticos) + ' elementos' };
       $$('.opcion-servicio', v).forEach(b => { const s = b.querySelector('.n'); if (s) s.textContent = n[b.dataset.serv]; });
     }).catch(() => {});
     $$('.opcion-servicio', v).forEach(b => b.onclick = () => { location.hash = '#consulta/' + b.dataset.serv; });
@@ -416,7 +423,7 @@
       <button role="tab" data-col="libros" aria-selected="${st.col === 'libros'}">${'Libros'}</button>
       <button role="tab" data-col="repositorios" aria-selected="${st.col === 'repositorios'}">Repositorios de trabajos de grado (PFC)</button></div>` : '';
     $$('[data-col]', sp).forEach(b => b.onclick = () => { st.col = b.dataset.col; st.filtros = {}; st.q = ''; $('#q').value = ''; st.limite = 24; prepararColeccion(); });
-    $('#q').placeholder = { libros: 'Título, autor, editorial, ISBN…', repositorios: 'Título del trabajo, autores, asesor, línea…', tecnologicos: 'Nombre del equipo, marca, modelo, ubicación…', didacticos: 'Nombre del material, categoría, área…' }[st.col];
+    $('#q').placeholder = { libros: 'Título, autor, editorial…', librosPFC: 'Título, autor, editorial…', repositorios: 'Título del trabajo, autores, asesor, línea…', tecnologicos: 'Nombre del equipo, marca, modelo, ubicación…', didacticos: 'Nombre del material, categoría, área…' }[st.col];
     $('#resultados').innerHTML = '<div class="cargando-bloque"><span class="cargando"></span> Cargando inventario…</div>';
     try { await obtenerPublico(st.col); }
     catch (e) { $('#resultados').innerHTML = `<div class="alerta error">${esc(e.message)}</div>`; return; }
@@ -470,7 +477,7 @@
     if (st.orden === 'codigo') res = res.slice().sort((a, b) => String(a.codigo).localeCompare(String(b.codigo), 'es', { numeric: true }));
     st.ultimos = res;
     const unidades = c.cantidad ? res.reduce((s, r) => s + (+r[c.cantidad] || 0), 0) : null;
-    $('#resInfo').innerHTML = `<span><strong>${fmt(res.length)}</strong> ${res.length === 1 ? 'resultado' : 'resultados'} en ${esc(c.nombre)}${unidades !== null ? ` · <strong>${fmt(unidades)}</strong> ${st.col === 'libros' ? 'ejemplares' : 'unidades'}` : ''}</span>`;
+    $('#resInfo').innerHTML = `<span><strong>${fmt(res.length)}</strong> ${res.length === 1 ? 'resultado' : 'resultados'} en ${esc(c.nombre)}${unidades !== null ? ` · <strong>${fmt(unidades)}</strong> ${esLibro(st.col) ? 'ejemplares' : 'unidades'}` : ''}</span>`;
     const serv = servDeCol(st.col);
     if (!res.length) {
       $('#resultados').innerHTML = `<div class="vacio">${I.vacio}<p><strong>No se encontraron resultados.</strong><br>Intente con otras palabras o quite algunos filtros.</p></div>`;
@@ -489,12 +496,12 @@
   }
   function ficha(col, r, i, serv) {
     const c = C[col];
-    const extra = col === 'libros' ? [r.area, r.ejemplares + ' ejempl.'] : col === 'repositorios' ? [r.anio, r.linea] : col === 'tecnologicos' ? [r.ubicacion, r.cantidad + ' und.'] : [r.area, r.cantidad + ' und.'];
+    const extra = esLibro(col) ? [r.area, r.ejemplares + ' ejempl.'] : col === 'repositorios' ? [r.anio, r.linea] : col === 'tecnologicos' ? [r.ubicacion, r.cantidad + ' und.'] : [r.area, r.cantidad + ' und.'];
     return `<button class="ficha" data-i="${i}" style="${estiloServ(serv)}">
       <span class="ficha__cod">${esc(r.codigo)}</span>
       <span class="ficha__tit">${esc(r[c.titulo])}</span>
       <span class="ficha__sub">${esc(r[c.subtitulo])}</span>
-      <span class="ficha__pie">${extra.filter(x => x && !/^undefined/.test(x)).map(x => `<span class="etiqueta">${esc(x)}</span>`).join('')}${etiquetaEstado(r.estado)}${col === 'libros' ? etiquetaEstado(r.disponibilidad) : ''}</span>
+      <span class="ficha__pie">${extra.filter(x => x && !/^undefined/.test(x)).map(x => `<span class="etiqueta">${esc(x)}</span>`).join('')}${etiquetaEstado(r.estado)}${esLibro(col) ? etiquetaEstado(r.disponibilidad) : ''}</span>
     </button>`;
   }
 
@@ -519,6 +526,7 @@
     const filtrosTxt = Object.entries(st.filtros).filter(([, v]) => v).map(([k, v]) => c.campos.find(f => f.k === k).l + ': ' + v);
     if (st.col === 'repositorios') filtrosTxt.unshift('Colección: Repositorios PFC');
     if (st.col === 'libros') filtrosTxt.unshift('Colección: Libros');
+    if (st.col === 'librosPFC') filtrosTxt.unshift('Colección: Libros PFC');
     const hayCriterio = st.q || Object.values(st.filtros).some(Boolean);
     if (!hayCriterio) return;
     const clave = st.col + '|' + st.q + '|' + filtrosTxt.join(';');
@@ -537,9 +545,10 @@
     if (!rolPuedeVer('libros')) return bloqueo(v, 'Sección de biblioteca', 'biblioteca');
     v.innerHTML = `<div class="contenedor">
       <div class="cabecera-vista"><div><span class="eyebrow">Gestión · usuarios autorizados</span><h2>Biblioteca</h2>
-        <p>Administre de forma independiente el inventario de libros y el repositorio de trabajos de grado de los estudiantes del Programa de Formación Complementaria (PFC).</p></div></div>
+        <p>Administre de forma independiente el inventario de libros, los libros del Programa de Formación Complementaria (PFC) y el repositorio de trabajos de grado de sus estudiantes.</p></div></div>
       <div class="pestanas" role="tablist">
         <button role="tab" data-tab="libros" aria-selected="${estado.biblioTab === 'libros'}">${I.libro.replace('<svg', '<svg width="16" height="16" style="vertical-align:-3px"')} Libros</button>
+        <button role="tab" data-tab="librosPFC" aria-selected="${estado.biblioTab === 'librosPFC'}">${I.pfc.replace('<svg', '<svg width="16" height="16" style="vertical-align:-3px"')} Libros PFC</button>
         <button role="tab" data-tab="repositorios" aria-selected="${estado.biblioTab === 'repositorios'}">${I.repo.replace('<svg', '<svg width="16" height="16" style="vertical-align:-3px"')} Repositorios de trabajos de grado (PFC)</button>
       </div>
       <div id="gestionBiblio"></div></div>`;
@@ -677,10 +686,10 @@
     // Resumen
     const act = c.baja ? todos.filter(r => r.situacion !== 'De baja') : todos;
     const mini = [[fmt(act.length), c.baja ? 'Referencias activas' : 'Registros']];
-    if (c.cantidad) mini.push([fmt(act.reduce((s, r) => s + (+r[c.cantidad] || 0), 0)), col === 'libros' ? 'Ejemplares' : 'Unidades activas']);
+    if (c.cantidad) mini.push([fmt(act.reduce((s, r) => s + (+r[c.cantidad] || 0), 0)), esLibro(col) ? 'Ejemplares' : 'Unidades activas']);
     if (c.baja) mini.push([fmt(todos.length - act.length), 'Dados de baja']);
     if (col === 'repositorios') mini.push([fmt(new Set(todos.map(r => r.anio)).size), 'Años con trabajos']);
-    if (col === 'libros') mini.push([fmt(todos.filter(r => r.disponibilidad === 'Prestado').length), 'Títulos prestados']);
+    if (esLibro(col)) mini.push([fmt(todos.filter(r => r.disponibilidad === 'Prestado').length), 'Títulos prestados']);
     $('#rg_' + col).innerHTML = mini.map(m => `<div class="mini-cifra"><b>${m[0]}</b><span>${m[1]}</span></div>`).join('');
     // datalists
     c.campos.filter(x => x.lista).forEach(x => { const dl = $('#dl_' + x.k); if (dl) dl.innerHTML = [...new Set(todos.map(r => r[x.k]).filter(Boolean))].sort().map(o => `<option value="${esc(o)}">`).join(''); });
@@ -847,7 +856,7 @@
         <div class="campo" id="dDesdeC"><label>Desde</label><input type="date" id="dDesde"></div>
         <div class="campo" id="dHastaC"><label>Hasta</label><input type="date" id="dHasta"></div>
         <div class="campo"><label>Tipo de usuario</label><select id="dTipo"><option value="todos">Todos</option><option value="Estudiante">Estudiantes</option><option value="Docente">Docentes</option><option value="Otros">Otros usuarios</option></select></div>
-        <div class="campo"><label>Servicio</label><select id="dServ"><option value="todos">Todos</option><option>Bibliográficos</option><option>Tecnológicos</option><option>Didácticos</option></select></div>
+        <div class="campo"><label>Servicio</label><select id="dServ"><option value="todos">Todos</option><option>Bibliográficos</option><option>Bibliográficos PFC</option><option>Tecnológicos</option><option>Didácticos</option></select></div>
         <button class="btn btn-verde btn-s" id="dExportar">${I.bajar} Exportar a Excel</button>
       </div>
       <div id="dashCuerpo"><div class="cargando-bloque"><span class="cargando"></span> Cargando registros…</div></div></div>`;
@@ -898,6 +907,11 @@
       </div>
       <div class="dash-grid">
         <div class="tarjeta ancho-total"><div class="tarjeta__cab"><h3>Consultas en el tiempo</h3><span class="etiqueta" id="gTiempoEt"></span></div><div class="grafico" id="gTiempo"></div></div>
+        <div class="tarjeta ancho-total"><div class="tarjeta__cab"><h3>Consultas de recursos bibliográficos PFC</h3><span class="etiqueta" id="gPfcTotal"></span></div>
+          <div class="dash-grid dash-sub">
+            <div><h4 class="subtitulo-graf">Por recurso y tipo de usuario</h4><div class="grafico" id="gPfc"></div></div>
+            <div><h4 class="subtitulo-graf">Estudiantes del PFC por semestre</h4><div class="grafico" id="gPfcSem"></div></div>
+          </div></div>
         <div class="tarjeta"><div class="tarjeta__cab"><h3>Consultas por servicio</h3></div><div class="grafico" id="gServicio"></div></div>
         <div class="tarjeta"><div class="tarjeta__cab"><h3>Términos más buscados</h3></div><div class="grafico" id="gTerminos"></div></div>
         <div class="tarjeta"><div class="tarjeta__cab"><h3>Estudiantes por grado</h3></div><div class="grafico" id="gGrado"></div></div>
@@ -924,11 +938,24 @@
     lista.forEach(c => { const k = String(c.fecha).slice(0, mensual ? 7 : 10); if (idx[k] !== undefined) vals[SERIES.findIndex(s => s.clave === grupo(c.tipo))][idx[k]]++; });
     Graficos.columnasApiladas($('#gTiempo'), { categorias: claves, etiquetas, series: SERIES.map((s, i) => ({ nombre: s.nombre, color: s.color, valores: vals[i] })) });
 
-    const servicios = ['Bibliográficos', 'Tecnológicos', 'Didácticos'];
+    const servicios = ['Bibliográficos', 'Bibliográficos PFC', 'Tecnológicos', 'Didácticos'];
     Graficos.barrasHorizontales($('#gServicio'), {
       series: SERIES, etiquetaAncho: 120,
       items: servicios.map(s => ({ etiqueta: s, valores: SERIES.map(se => lista.filter(c => c.servicio === s && grupo(c.tipo) === se.clave).length) }))
     });
+    // Recursos PFC: Libros PFC (servicio propio) y Repositorios PFC (colección dentro de Bibliográficos)
+    const esLibPfc = c => c.servicio === 'Bibliográficos PFC';
+    const esRepPfc = c => /Colección: Repositorios PFC/.test(c.filtros || '');
+    const pfc = lista.filter(c => esLibPfc(c) || esRepPfc(c));
+    $('#gPfcTotal').textContent = fmt(pfc.length) + ' consultas';
+    Graficos.barrasHorizontales($('#gPfc'), {
+      series: SERIES, etiquetaAncho: 130,
+      items: [['Libros PFC', esLibPfc], ['Repositorios PFC', esRepPfc]].map(([et, fn]) => ({ etiqueta: et, valores: SERIES.map(se => lista.filter(c => fn(c) && grupo(c.tipo) === se.clave).length) }))
+    });
+    const sem = contar(pfc.filter(c => c.tipo === 'Estudiante' && /^PFC/.test(c.grado)), 'grado');
+    Graficos.barrasHorizontales($('#gPfcSem'), { series: [{ nombre: 'Consultas', color: '#A86B00' }], etiquetaAncho: 150,
+      items: E.GRADOS.filter(g => sem[g]).map(g => ({ etiqueta: g, valores: [sem[g]] })) });
+    if (!Object.keys(sem).length) $('#gPfcSem').innerHTML = '<div class="sin-datos">Sin consultas de estudiantes del PFC en el periodo.</div>';
     const term = {}; lista.forEach(c => { const t = norm(c.termino).trim(); if (t) term[t] = (term[t] || 0) + 1; });
     Graficos.barrasHorizontales($('#gTerminos'), { series: [{ nombre: 'Búsquedas', color: '#14518A' }], etiquetaAncho: 160,
       items: Object.entries(term).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([k, v]) => ({ etiqueta: k, valores: [v] })) });

@@ -30,6 +30,12 @@ const COLECCIONES = {
              'ejemplares', 'ubicacion', 'estado', 'disponibilidad', 'observaciones'],
     requeridos: ['titulo', 'autor', 'ejemplares', 'estado']
   },
+  librosPFC: {
+    hoja: 'LibrosPFC', prefijo: 'LPF', rol: 'biblioteca', baja: false,
+    campos: ['codigo', 'titulo', 'autor', 'editorial', 'anio', 'area', 'tipo',
+             'ejemplares', 'ubicacion', 'estado', 'disponibilidad', 'observaciones'],
+    requeridos: ['titulo', 'autor', 'ejemplares', 'estado']
+  },
   repositorios: {
     hoja: 'Repositorios', prefijo: 'REP', rol: 'biblioteca', baja: false,
     campos: ['codigo', 'titulo', 'autores', 'asesor', 'anio', 'linea', 'modalidad', 'formato'],
@@ -140,12 +146,12 @@ function instalar() {
   }
   const hojaVacia = ss().getSheetByName('Hoja 1') || ss().getSheetByName('Sheet1');
   if (hojaVacia && ss().getSheets().length > 1 && hojaVacia.getLastRow() === 0) ss().deleteSheet(hojaVacia);
-  PropertiesService.getScriptProperties().setProperty('INSTALADO', 'v1');
+  PropertiesService.getScriptProperties().setProperty('INSTALADO', 'v2');
   return 'Instalación completa. Usuario: ' + CONFIG.ADMIN_USUARIO;
 }
 
 function asegurarInstalacion() {
-  if (PropertiesService.getScriptProperties().getProperty('INSTALADO') !== 'v1') instalar();
+  if (PropertiesService.getScriptProperties().getProperty('INSTALADO') !== 'v2') instalar();
 }
 
 function ss() { return SpreadsheetApp.getActiveSpreadsheet(); }
@@ -274,13 +280,15 @@ function soloAdmin(ses) { if (ses.rol !== 'admin') throw new Error('Solo el admi
 function num(v) { const n = Number(String(v).replace(',', '.')); return isFinite(n) ? n : 0; }
 
 function resumen() {
-  const libros = leer('Libros'), repos = leer('Repositorios');
+  const libros = leer('Libros'), librosPFC = leer('LibrosPFC'), repos = leer('Repositorios');
   const tec = leer('Tecnologicos'), did = leer('Didacticos');
   const activos = function (arr) { return arr.filter(function (r) { return r.situacion !== 'De baja'; }); };
   const suma = function (arr, k) { return arr.reduce(function (s, r) { return s + num(r[k]); }, 0); };
   return {
     librosTitulos: libros.length,
     librosEjemplares: suma(libros, 'ejemplares'),
+    librosPFCTitulos: librosPFC.length,
+    librosPFCEjemplares: suma(librosPFC, 'ejemplares'),
     repositorios: repos.length,
     tecnologicos: suma(activos(tec), 'cantidad'),
     tecnologicosRegistros: activos(tec).length,

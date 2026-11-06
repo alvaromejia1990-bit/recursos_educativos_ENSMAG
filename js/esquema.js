@@ -83,6 +83,12 @@
     }
   };
 
+  /* Libros PFC: misma estructura y formulario que Libros, inventario independiente. */
+  COLECCIONES.librosPFC = Object.assign({}, COLECCIONES.libros, {
+    nombre: 'Libros PFC', singular: 'libro PFC', servicio: 'Bibliográficos PFC', prefijo: 'LPF',
+    campos: COLECCIONES.libros.campos.map(f => f.k === 'codigo' ? Object.assign({}, f, { ph: 'Automático si se deja vacío (LPF-0001)' }) : f)
+  });
+
   const CAMPOS_SISTEMA = [
     { k: 'situacion', l: 'Situación' }, { k: 'fechaBaja', l: 'Fecha de baja' }, { k: 'motivoBaja', l: 'Motivo de baja' },
     { k: 'bajaPor', l: 'Baja registrada por' }, { k: 'fechaRegistro', l: 'Fecha de registro' }, { k: 'registradoPor', l: 'Registrado por' },
@@ -91,7 +97,7 @@
 
   const ROLES = {
     admin: 'Administrador (todas las secciones y cuentas)',
-    biblioteca: 'Biblioteca (libros y repositorios)',
+    biblioteca: 'Biblioteca (libros, libros PFC y repositorios)',
     tecnologia: 'Recursos tecnológicos',
     didactica: 'Recursos didácticos',
     directivo: 'Directivo (dashboard y reportes, solo lectura)'

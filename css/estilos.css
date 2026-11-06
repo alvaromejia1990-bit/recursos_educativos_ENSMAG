@@ -15,6 +15,8 @@
   --verde: #2E7D5B;
   --verde-claro: #E5F3EC;
   --amarillo: #F2B705;
+  --oro: #A86B00;
+  --oro-claro: #FFF3D4;
   --rojo: #D93025;
   --rojo-claro: #FDECEA;
   --ambar-claro: #FFF6DB;
@@ -168,7 +170,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--azul); outline: 
 .hero__escudo { width: 190px; filter: drop-shadow(0 10px 22px rgba(194, 24, 91, .18)); position: relative; z-index: 1; }
 .hero__acciones { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
 
-.cifras { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 26px 0 8px; }
+.cifras { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin: 26px 0 8px; }
 .cifra {
   background: #fff; border: 1px solid var(--borde); border-radius: var(--radio); padding: 18px 20px; box-shadow: var(--sombra);
   position: relative; overflow: hidden;
@@ -180,7 +182,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--azul); outline: 
 .cifra__etiqueta { font-weight: 600; color: var(--tinta-2); margin-top: 6px; }
 .cifra__nota { font-size: .84rem; color: var(--tinta-3); margin-top: 2px; }
 
-.servicios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 26px; }
+.servicios { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 26px; }
 .servicio {
   border: 1px solid var(--borde); border-radius: var(--radio); padding: 24px; background: #fff; box-shadow: var(--sombra);
   display: flex; flex-direction: column; gap: 8px; border-top: 5px solid var(--c);
@@ -200,7 +202,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--azul); outline: 
 .bloque { margin-top: 44px; }
 
 /* ---------- Consulta ---------- */
-.selector-servicio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+.selector-servicio { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
 .opcion-servicio {
   display: flex; align-items: center; gap: 14px; text-align: left; background: #fff; border: 2px solid var(--borde);
   border-radius: var(--radio); padding: 16px 18px; cursor: pointer; font: inherit; color: inherit; transition: border-color .15s, box-shadow .15s;
@@ -313,6 +315,8 @@ table.tabla { width: 100%; border-collapse: collapse; font-size: .93rem; }
 .leyenda { display: flex; gap: 16px; flex-wrap: wrap; font-size: .88rem; color: var(--tinta-2); margin-bottom: 10px; }
 .leyenda span { display: inline-flex; align-items: center; gap: 6px; }
 .leyenda i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.dash-sub { gap: 28px; }
+.subtitulo-graf { font-family: var(--fuente); font-size: .9rem; font-weight: 600; color: var(--tinta-2); margin: 0 0 8px; }
 .sin-datos { color: var(--tinta-3); text-align: center; padding: 40px 0; font-size: .95rem; }
 
 .tooltip {
@@ -361,8 +365,13 @@ table.tabla { width: 100%; border-collapse: collapse; font-size: .93rem; }
 .pie__der { text-align: right; }
 
 /* ---------- Responsivo ---------- */
+@media (max-width: 1180px) {
+  .cifras { grid-template-columns: repeat(3, 1fr); }
+  .servicios { grid-template-columns: repeat(2, 1fr); }
+}
 @media (max-width: 1000px) {
   .cifras { grid-template-columns: repeat(2, 1fr); }
+  .selector-servicio { grid-template-columns: repeat(2, 1fr); }
   .kpis { grid-template-columns: repeat(3, 1fr); }
   .dash-grid { grid-template-columns: 1fr; }
 }

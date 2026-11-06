@@ -112,9 +112,9 @@
       ['Indicador', 'Valor'],
       ['Registros activos', activos.length]
     ];
-    if (c.cantidad) resumen.push([col === 'libros' ? 'Total de ejemplares' : 'Total de unidades', activos.reduce((s, r) => s + (Number(r[c.cantidad]) || 0), 0)]);
+    if (c.cantidad) resumen.push([(col === 'libros' || col === 'librosPFC') ? 'Total de ejemplares' : 'Total de unidades', activos.reduce((s, r) => s + (Number(r[c.cantidad]) || 0), 0)]);
     if (c.baja) resumen.push(['Registros dados de baja', bajas.length]);
-    const agrupador = col === 'libros' ? 'area' : col === 'repositorios' ? 'linea' : 'categoria';
+    const agrupador = (col === 'libros' || col === 'librosPFC') ? 'area' : col === 'repositorios' ? 'linea' : 'categoria';
     const etAg = c.campos.find(f => f.k === agrupador).l;
     resumen.push([], ['Distribución por ' + etAg.toLowerCase(), c.cantidad ? 'Unidades' : 'Registros']);
     contarPor(activos, agrupador, c.cantidad).forEach(p => resumen.push(p));
